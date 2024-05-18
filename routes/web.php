@@ -27,7 +27,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('notes', NoteController::class)
-    ->only(['index','store','create','edit','update','destroy']);
+    ->only(['index','store','create','edit','update','destroy','show']);
 
 require __DIR__.'/auth.php';
 

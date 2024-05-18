@@ -14,14 +14,23 @@ class NoteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+
+        $tags = array_values(TaggingHelper::getTags());
+
         return inertia(
             'Notes/index',
             [
-                'notes' => Note::all()
+                'filters' => $request->only([
+                    'tag'
+                ]),
+                'tags' => $tags,
+                'notes' => Note::orderByDesc('created_at')
+                    ->paginate(10)
             ]
         );
+
     }
 
     /**
@@ -49,22 +58,7 @@ class NoteController extends Controller
         //Added Tags Logic Here
 
         // Retrieve the list of tags
-        $tags = TaggingHelper::getTags();
-
-        // Iterate through the tags and check for matches
-        $tags_match = [];
-
-        // Check if any keyword is found in the title or description
-        foreach ($tags as $keyword => $tag) {
-            if (stripos($note->title, $keyword) !== false || stripos($note->description, $keyword) !== false) {
-                // Keyword found, add corresponding tag to the array
-                $tags_match[] = $tag;
-            }
-        }
-
-        // Assign tags to the note
-        $note->tags = implode(',', $tags_match);
-        $note->save();
+        $this->extracted($note);
 
 
         // Handle cover photo upload if present
@@ -82,9 +76,14 @@ class NoteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Note $note)
     {
-        //
+        return inertia(
+            'Notes/Show',
+            [
+                'notes' => $note
+            ]
+        );
     }
 
     /**
@@ -113,6 +112,16 @@ class NoteController extends Controller
             ])
         );
 
+        $this->extracted($note);
+
+        if ($request->hasFile('cover_photo')) {
+            $image = $request->file('cover_photo');
+            $path = $image->store('images', 'public');
+            $note->cover_photo = $path;
+            $note->save();
+        }
+
+
         return redirect()->route('notes.index')
             ->with('success', 'NoteBook was edited!');
     }
@@ -132,6 +141,30 @@ class NoteController extends Controller
 
         return redirect()->back()
             ->with('success', 'NoteBook was deleted!');
+    }
+
+    /**
+     * @param Note $note
+     * @return void
+     */
+    public function extracted(Note $note): void
+    {
+        $tags = TaggingHelper::getTags();
+
+        // Iterate through the tags and check for matches
+        $tags_match = [];
+
+        // Check if any keyword is found in the title or description
+        foreach ($tags as $keyword => $tag) {
+            if (stripos($note->title, $keyword) !== false || stripos($note->description, $keyword) !== false) {
+                // Keyword found, add corresponding tag to the array
+                $tags_match[] = $tag;
+            }
+        }
+
+        // Assign tags to the note
+        $note->tags = implode(',', $tags_match);
+        $note->save();
     }
 
 }
