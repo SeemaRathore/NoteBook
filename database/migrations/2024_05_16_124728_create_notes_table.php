@@ -16,6 +16,11 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('cover_photo')->nullable();
+            $table->foreignIdFor(
+                \App\Models\User::class,
+                'user_id'
+            )->constrained('users');
+            $table->text('tags')->nullable();
             $table->timestamps();
         });
     }

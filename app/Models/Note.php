@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Note extends Model
 {
 
+    /**
+     * @var false|mixed|string
+     */
     protected $fillable = [
         'title', 'description', 'cover_photo'
     ];
