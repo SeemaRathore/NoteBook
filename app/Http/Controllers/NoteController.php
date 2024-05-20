@@ -104,7 +104,6 @@ class NoteController extends Controller
      */
     public function update(Request $request, Note $note)
     {
-
         $note->update(
             $request->validate([
                 'title' => 'required',
