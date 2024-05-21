@@ -102,29 +102,37 @@ class NoteController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    // NoteController@update method
     public function update(Request $request, Note $note)
     {
-        $note->update(
-            $request->validate([
-                'title' => 'required',
-                'description' => 'required',
+        $note->update($request->validate([
+            'title' => 'required',
+            'description' => 'required',
+        ]));
 
-            ])
-        );
+        if ($request->hasFile('cover_photo')) {
+            // Handle file upload if a new image is provided
+            $image = $request->file('cover_photo');
+            $path = $image->store('images', 'public');
+
+            // If an existing image exists, delete it
+            if ($note->cover_photo) {
+                Storage::disk('public')->delete($note->cover_photo);
+            }
+
+            // Update cover photo attribute with the new image path
+            $note->cover_photo = $path;
+        }
+
+        $note->save();
 
         $this->extracted($note);
 
-        if ($request->hasFile('cover_photo')) {
-            $image = $request->file('cover_photo');
-            $path = $image->store('images', 'public');
-            $note->cover_photo = $path;
-            $note->save();
-        }
-
-
-        return redirect()->route('notes.index')
-            ->with('success', 'NoteBook was edited!');
+        return redirect()->route('notes.index')->with('success', 'NoteBook was edited!');
     }
+
+
+
 
     /**
      * Remove the specified resource from storage.

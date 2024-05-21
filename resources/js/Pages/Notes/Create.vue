@@ -35,6 +35,7 @@ const form = useForm({
     description: null,
     cover_photo:null
 })
+
 const create = () => form.post(route('notes.store'))
 const handleFileUpload = (event) => {
     // Set the selected file to the form data
