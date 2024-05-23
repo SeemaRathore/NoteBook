@@ -50,32 +50,7 @@ const handleFileUpload = (event) => {
     console.log(form);
 };
 
-//const update = () => form.put(route('notes.update', { note: props.notes.id }));
+const update = () => form.post(route('notes.update', { note: props.notes.id }));
 
-
-
-const updateRoute = route('notes.update', { note: props.notes.id });
-const INDEX_ROUTE_URL = '/notes';
-const update = async () => {
-    try {
-        const formData = new FormData();
-        formData.append('_method', 'PUT');
-        formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content')); // Add CSRF token
-        formData.append('title', form.title);
-        formData.append('description', form.description);
-        formData.append('cover_photo', form.cover_photo);
-
-        await axios.post(updateRoute, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-
-        window.location.href = INDEX_ROUTE_URL;
-    } catch (error) {
-        console.error(error);
-
-    }
-};
 </script>
 

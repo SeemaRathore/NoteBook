@@ -27,7 +27,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('notes', NoteController::class)
-    ->only(['index','store','create','edit','update','destroy','show']);
+    ->only(['index','store','create','edit','destroy','show']);
+
+Route::post('/notes/{note}', [NoteController::class, 'update'])->name('notes.update');
 
 require __DIR__.'/auth.php';
 
