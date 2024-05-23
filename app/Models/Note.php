@@ -14,7 +14,7 @@ class Note extends Model
      * @var false|mixed|string
      */
     protected $fillable = [
-        'title', 'description', 'cover_photo'
+        'title', 'description', 'cover_photo', 'user_id', 'tags', 'tag_end',
     ];
 
 

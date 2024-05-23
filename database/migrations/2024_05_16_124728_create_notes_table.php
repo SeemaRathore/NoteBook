@@ -21,6 +21,7 @@ return new class extends Migration
                 'user_id'
             )->constrained('users');
             $table->text('tags')->nullable();
+            $table->timestamp('tag_end')->nullable();
             $table->timestamps();
         });
     }

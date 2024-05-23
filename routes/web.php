@@ -30,6 +30,9 @@ Route::resource('notes', NoteController::class)
     ->only(['index','store','create','edit','destroy','show']);
 
 Route::post('/notes/{note}', [NoteController::class, 'update'])->name('notes.update');
+//Route::put('/notes/update-tag-end', [NoteController::class, 'updateTagEnd']);  //Api Route
+Route::put('/notes/update-tag-end', [NoteController::class, 'updateTagEnd'])->name('notes.update-tag-end');
+
 
 require __DIR__.'/auth.php';
 

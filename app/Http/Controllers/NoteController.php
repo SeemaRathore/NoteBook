@@ -7,6 +7,8 @@ use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+
 
 
 class NoteController extends Controller
@@ -173,6 +175,25 @@ class NoteController extends Controller
         // Assign tags to the note
         $note->tags = implode(',', $tags_match);
         $note->save();
+    }
+
+    public function updateTagEnd(Request $request)
+    {
+        // Get the current timestamp
+        $currentTime = Carbon::now();
+
+        // Get the latest note added before the end of the current date
+        $latestNote = Note::whereDate('created_at', '<=', $currentTime)
+            ->latest()
+            ->first();
+
+        if ($latestNote) {
+            // Update the tag_end column for the latest note with the current timestamp
+            $latestNote->update(['tag_end' => $currentTime]);
+            return response()->json(['message' => 'Tag_end column updated for the latest note added before the end of the day.']);
+        } else {
+            return response()->json(['message' => 'No notes found to update tag_end column.'], 404);
+        }
     }
 
 }
